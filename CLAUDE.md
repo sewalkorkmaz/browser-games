@@ -36,5 +36,8 @@ Any new game added to this repo must follow this same visual convention.
 
 - Remote: `https://github.com/sewalkorkmaz/browser-games`
 - Branch: `master`
-- After every change: commit with a descriptive message and push to `origin master`
 - Commit style: short imperative subject line, optional body for context
+
+**Commit and push frequently throughout all work.** After every meaningful change — adding a feature, fixing a bug, updating a file — stage, commit, and push immediately. Never leave completed work uncommitted. This ensures no progress is ever lost and the GitHub history always reflects the current state of the project.
+
+Each logical unit of work should be its own commit. Do not batch unrelated changes into one commit.

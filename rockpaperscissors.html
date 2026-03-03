@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #1a1a2e;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      letter-spacing: 2px;
+      color: #e0e0e0;
+    }
+
+    #score {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .score-box {
+      text-align: center;
+    }
+
+    .score-box .label {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .score-box .value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .score-box.player .value { color: #a0c4ff; }
+    .score-box.draw .value   { color: #aaa; }
+    .score-box.computer .value { color: #ff6b6b; }
+
+    #status {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      height: 1.5rem;
+      font-weight: 600;
+    }
+
+    #choices {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .choice-btn {
+      background: #16213e;
+      border: none;
+      border-radius: 12px;
+      color: #eee;
+      font-size: 1rem;
+      font-family: inherit;
+      padding: 1rem 1.6rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s, transform 0.1s;
+      user-select: none;
+      min-width: 100px;
+    }
+
+    .choice-btn .emoji {
+      font-size: 2.5rem;
+    }
+
+    .choice-btn:hover {
+      background: #0f3460;
+      transform: scale(1.07);
+    }
+
+    .choice-btn:active {
+      transform: scale(0.97);
+    }
+
+    #result-area {
+      background: #16213e;
+      border-radius: 14px;
+      padding: 1.4rem 2.2rem;
+      text-align: center;
+      min-width: 320px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+    }
+
+    #result-area.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    #choices-display {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.95rem;
+    }
+
+    .choice-reveal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .choice-reveal .who {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+    }
+
+    .choice-reveal .pick {
+      font-size: 2rem;
+    }
+
+    .choice-reveal .pick-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    #round-result {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 1.2rem;
+    }
+
+    #play-again {
+      padding: 0.7rem 2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #e94560;
+      color: white;
+      cursor: pointer;
+      letter-spacing: 1px;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    #play-again:hover {
+      background: #c73652;
+      transform: scale(1.04);
+    }
+  </style>
+</head>
+<body>
+
+<h1>Rock Paper Scissors</h1>
+
+<div id="score">
+  <div class="score-box player">
+    <div class="label">Player Wins</div>
+    <div class="value" id="score-player">0</div>
+  </div>
+  <div class="score-box draw">
+    <div class="label">Draws</div>
+    <div class="value" id="score-draw">0</div>
+  </div>
+  <div class="score-box computer">
+    <div class="label">Computer Wins</div>
+    <div class="value" id="score-computer">0</div>
+  </div>
+</div>
+
+<div id="status" style="color: #a0c4ff;">Choose your move!</div>
+
+<div id="choices">
+  <button class="choice-btn" data-choice="rock">
+    <span class="emoji">🪨</span>Rock
+  </button>
+  <button class="choice-btn" data-choice="paper">
+    <span class="emoji">📄</span>Paper
+  </button>
+  <button class="choice-btn" data-choice="scissors">
+    <span class="emoji">✂️</span>Scissors
+  </button>
+</div>
+
+<div id="result-area">
+  <div id="choices-display">
+    <div class="choice-reveal">
+      <span class="who">You</span>
+      <span class="pick" id="player-pick-emoji"></span>
+      <span class="pick-name" id="player-pick-name" style="color: #a0c4ff;"></span>
+    </div>
+    <div class="choice-reveal">
+      <span class="who">Computer</span>
+      <span class="pick" id="computer-pick-emoji"></span>
+      <span class="pick-name" id="computer-pick-name" style="color: #ff6b6b;"></span>
+    </div>
+  </div>
+  <div id="round-result"></div>
+  <button id="play-again">Play Again</button>
+</div>
+
+<script>
+  const CHOICES = ['rock', 'paper', 'scissors'];
+  const EMOJI   = { rock: '🪨', paper: '📄', scissors: '✂️' };
+
+  const BEATS = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
+
+  const score = { player: 0, draw: 0, computer: 0 };
+
+  const statusEl       = document.getElementById('status');
+  const resultArea     = document.getElementById('result-area');
+  const playerEmoji    = document.getElementById('player-pick-emoji');
+  const playerName     = document.getElementById('player-pick-name');
+  const computerEmoji  = document.getElementById('computer-pick-emoji');
+  const computerName   = document.getElementById('computer-pick-name');
+  const roundResult    = document.getElementById('round-result');
+
+  document.getElementById('choices').addEventListener('click', e => {
+    const btn = e.target.closest('.choice-btn');
+    if (!btn) return;
+    play(btn.dataset.choice);
+  });
+
+  document.getElementById('play-again').addEventListener('click', resetRound);
+
+  function play(playerChoice) {
+    const computerChoice = CHOICES[Math.floor(Math.random() * 3)];
+
+    playerEmoji.textContent   = EMOJI[playerChoice];
+    playerName.textContent    = capitalize(playerChoice);
+    computerEmoji.textContent = EMOJI[computerChoice];
+    computerName.textContent  = capitalize(computerChoice);
+
+    let resultText, resultColor;
+
+    if (playerChoice === computerChoice) {
+      resultText  = "It's a draw!";
+      resultColor = '#aaa';
+      score.draw++;
+    } else if (BEATS[playerChoice] === computerChoice) {
+      resultText  = 'You win!';
+      resultColor = '#a0c4ff';
+      score.player++;
+    } else {
+      resultText  = 'Computer wins!';
+      resultColor = '#ff6b6b';
+      score.computer++;
+    }
+
+    roundResult.textContent  = resultText;
+    roundResult.style.color  = resultColor;
+    statusEl.textContent     = resultText;
+    statusEl.style.color     = resultColor;
+
+    updateScore();
+    resultArea.classList.add('visible');
+  }
+
+  function resetRound() {
+    resultArea.classList.remove('visible');
+    statusEl.textContent = 'Choose your move!';
+    statusEl.style.color = '#a0c4ff';
+  }
+
+  function updateScore() {
+    document.getElementById('score-player').textContent   = score.player;
+    document.getElementById('score-draw').textContent     = score.draw;
+    document.getElementById('score-computer').textContent = score.computer;
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+</script>
+
+</body>
+</html>
